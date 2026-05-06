@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Editor from '@monaco-editor/react'
+import { API_BASE_URL } from '../config/api'
 
 interface Example {
   input: string
@@ -220,7 +221,7 @@ function SolvePage({ darkMode }: SolvePageProps) {
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:4000/api/problems/${id}`)
+      fetch(`${API_BASE_URL}/api/problems/${id}`)
         .then(res => res.json())
         .then(data => {
           setProblem(data)

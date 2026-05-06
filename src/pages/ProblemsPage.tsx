@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { API_BASE_URL } from '../config/api'
 
 interface Problem {
   id: number
@@ -20,7 +21,7 @@ function ProblemsPage() {
   }
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/problems')
+    fetch(`${API_BASE_URL}/api/problems`)
       .then(res => res.json())
       .then(data => {
         setProblems(data)

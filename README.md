@@ -1,6 +1,10 @@
-# GapCode - 填空式算法刷题平台
+# GapCode - 填空式算法刷题平台 (GitHub Template)
 
-This is a React + TypeScript + Vite project converted from raw.html with backend and database support!
+This is a full-stack React + TypeScript + Vite + Express project with dual database support (SQLite for local, Neon/PostgreSQL for production)!
+
+**This repo is a GitHub Template! Click "Use this template" to start your own project!**
+
+See `TEMPLATE_SETUP.md` for detailed instructions on how to use this template!
 
 ## Key Points to Remember
 - **Local Development**: Uses SQLite, set `LOCAL_SQLITE=true` in `.env`

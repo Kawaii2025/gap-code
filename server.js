@@ -1,13 +1,21 @@
-import express from 'express';
-import cors from 'cors';
-import { query, get, run, isPostgres } from './db.js';
+import express from 'express'
+import cors from 'cors'
+import { query, get, run, isPostgres } from './db.js'
 
-const app = express();
-const PORT = 4000;
+const app = express()
+const PORT = process.env.PORT || 4000
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors())
+app.use(express.json())
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    database: isPostgres ? 'Neon (PostgreSQL)' : 'SQLite (Local)'
+  })
+});
 
 // API Endpoints
 

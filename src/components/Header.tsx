@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { API_BASE_URL } from '../config/api'
 
 interface HeaderProps {
   toggleTheme: () => void
@@ -7,6 +8,22 @@ interface HeaderProps {
 
 function Header({ toggleTheme }: HeaderProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [dbStatus, setDbStatus] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchDbStatus = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/health`)
+        const data = await response.json()
+        setDbStatus(data.database)
+      } catch (err) {
+        console.error('Error fetching DB status:', err)
+        setDbStatus('Unknown')
+      }
+    }
+
+    fetchDbStatus()
+  }, [])
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -24,6 +41,14 @@ function Header({ toggleTheme }: HeaderProps) {
           </div>
           
           <div className="flex items-center space-x-4">
+            {/* Database Status Badge */}
+            {dbStatus && (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700">
+                <i className={`fa fa-database ${dbStatus.includes('Neon') ? 'text-purple-500' : 'text-blue-500'}`}></i>
+                <span className="text-gray-700 dark:text-gray-300">{dbStatus}</span>
+              </div>
+            )}
+            
             <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
               <i className="fa fa-moon-o dark:hidden"></i>
               <i className="fa fa-sun-o hidden dark:inline-block"></i>

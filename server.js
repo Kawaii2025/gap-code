@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import db from './db.js';
+import { query, get, run, isPostgres } from './db.js';
 
 const app = express();
 const PORT = 4000;
@@ -12,76 +12,78 @@ app.use(express.json());
 // API Endpoints
 
 // Get all problems
-app.get('/api/problems', (req, res) => {
-  db.all('SELECT * FROM problems', (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/problems', async (req, res) => {
+  try {
+    const rows = await query('SELECT * FROM problems');
     const problems = rows.map(row => ({
       ...row,
-      examples: JSON.parse(row.examples),
-      hints: JSON.parse(row.hints),
-      correctAnswers: JSON.parse(row.correctAnswers),
-      testCases: JSON.parse(row.testCases)
+      examples: isPostgres ? row.examples : JSON.parse(row.examples),
+      hints: isPostgres ? row.hints : JSON.parse(row.hints),
+      correctAnswers: isPostgres ? row.correctanswers : JSON.parse(row.correctAnswers),
+      testCases: isPostgres ? row.testcases : JSON.parse(row.testCases)
     }));
     res.json(problems);
-  });
+  } catch (err) {
+    console.error('Error fetching problems:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get a single problem by id
-app.get('/api/problems/:id', (req, res) => {
+app.get('/api/problems/:id', async (req, res) => {
   const { id } = req.params;
-  db.get('SELECT * FROM problems WHERE id = ?', [id], (err, row) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+  try {
+    const row = await get('SELECT * FROM problems WHERE id = $1', [id]);
     if (!row) {
-      res.status(404).json({ error: 'Problem not found' });
-      return;
+      return res.status(404).json({ error: 'Problem not found' });
     }
     const problem = {
       ...row,
-      examples: JSON.parse(row.examples),
-      hints: JSON.parse(row.hints),
-      correctAnswers: JSON.parse(row.correctAnswers),
-      testCases: JSON.parse(row.testCases)
+      examples: isPostgres ? row.examples : JSON.parse(row.examples),
+      hints: isPostgres ? row.hints : JSON.parse(row.hints),
+      correctAnswers: isPostgres ? row.correctanswers : JSON.parse(row.correctAnswers),
+      testCases: isPostgres ? row.testcases : JSON.parse(row.testCases)
     };
     res.json(problem);
-  });
+  } catch (err) {
+    console.error('Error fetching problem:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Add a submission
-app.post('/api/submissions', (req, res) => {
+app.post('/api/submissions', async (req, res) => {
   const { problemId, code, status } = req.body;
-  db.run(
-    'INSERT INTO submissions (problemId, code, status) VALUES (?, ?, ?)',
-    [problemId, code, status],
-    function (err) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.status(201).json({
-        id: this.lastID,
-        problemId,
-        code,
-        status
-      });
+  try {
+    let result;
+    if (isPostgres) {
+      result = await run(
+        'INSERT INTO submissions (problemId, code, status) VALUES ($1, $2, $3) RETURNING *',
+        [problemId, code, status]
+      );
+    } else {
+      result = await run(
+        'INSERT INTO submissions (problemId, code, status) VALUES (?, ?, ?)',
+        [problemId, code, status]
+      );
+      result = { id: result.lastID, problemId, code, status };
     }
-  );
+    res.status(201).json(result);
+  } catch (err) {
+    console.error('Error adding submission:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get all submissions
-app.get('/api/submissions', (req, res) => {
-  db.all('SELECT * FROM submissions ORDER BY createdAt DESC', (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+app.get('/api/submissions', async (req, res) => {
+  try {
+    const rows = await query('SELECT * FROM submissions ORDER BY createdAt DESC');
     res.json(rows);
-  });
+  } catch (err) {
+    console.error('Error fetching submissions:', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Start server

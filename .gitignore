@@ -20,6 +20,9 @@ vite.config.js
 # Database
 problems.db
 
+# Environment variables
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -111,10 +111,10 @@ async function initializePostgresDatabase() {
     description TEXT NOT NULL,
     examples JSONB NOT NULL,
     hints JSONB NOT NULL,
-    initialCode TEXT NOT NULL,
-    correctAnswers JSONB NOT NULL,
-    testCases JSONB NOT NULL,
-    functionName TEXT NOT NULL
+    "initialCode" TEXT NOT NULL,
+    "correctAnswers" JSONB NOT NULL,
+    "testCases" JSONB NOT NULL,
+    "functionName" TEXT NOT NULL
   )`);
 
   const result = await db.query('SELECT COUNT(*) as count FROM problems');
@@ -125,17 +125,17 @@ async function initializePostgresDatabase() {
 
   await db.query(`CREATE TABLE IF NOT EXISTS submissions (
     id SERIAL PRIMARY KEY,
-    problemId INTEGER NOT NULL,
+    "problemId" INTEGER NOT NULL,
     code TEXT NOT NULL,
     status TEXT NOT NULL,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (problemId) REFERENCES problems(id)
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY ("problemId") REFERENCES problems(id)
   )`);
 }
 
 // Seed problems for PostgreSQL
 async function seedPostgresProblems() {
-  const insertQuery = `INSERT INTO problems (title, difficulty, acceptance, description, examples, hints, initialCode, correctAnswers, testCases, functionName) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+  const insertQuery = `INSERT INTO problems (title, difficulty, acceptance, description, examples, hints, "initialCode", "correctAnswers", "testCases", "functionName") VALUES ($1, $2, $3, $4, $5::jsonb, $6::jsonb, $7, $8::jsonb, $9::jsonb, $10)`;
 
   for (const problem of problems) {
     await db.query(insertQuery, [
@@ -143,11 +143,11 @@ async function seedPostgresProblems() {
       problem.difficulty,
       problem.acceptance,
       problem.description,
-      problem.examples,
-      problem.hints,
+      JSON.stringify(problem.examples),
+      JSON.stringify(problem.hints),
       problem.initialCode,
-      problem.correctAnswers,
-      problem.testCases,
+      JSON.stringify(problem.correctAnswers),
+      JSON.stringify(problem.testCases),
       problem.functionName
     ]);
   }

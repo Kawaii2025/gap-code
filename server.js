@@ -15,13 +15,31 @@ app.use(express.json());
 app.get('/api/problems', async (req, res) => {
   try {
     const rows = await query('SELECT * FROM problems');
-    const problems = rows.map(row => ({
-      ...row,
-      examples: isPostgres ? row.examples : JSON.parse(row.examples),
-      hints: isPostgres ? row.hints : JSON.parse(row.hints),
-      correctAnswers: isPostgres ? row.correctanswers : JSON.parse(row.correctAnswers),
-      testCases: isPostgres ? row.testcases : JSON.parse(row.testCases)
-    }));
+    const problems = rows.map(row => {
+      if (isPostgres) {
+        return {
+          id: row.id,
+          title: row.title,
+          difficulty: row.difficulty,
+          acceptance: row.acceptance,
+          description: row.description,
+          examples: row.examples,
+          hints: row.hints,
+          initialCode: row["initialCode"],
+          correctAnswers: row["correctAnswers"],
+          testCases: row["testCases"],
+          functionName: row["functionName"]
+        };
+      } else {
+        return {
+          ...row,
+          examples: JSON.parse(row.examples),
+          hints: JSON.parse(row.hints),
+          correctAnswers: JSON.parse(row.correctAnswers),
+          testCases: JSON.parse(row.testCases)
+        };
+      }
+    });
     res.json(problems);
   } catch (err) {
     console.error('Error fetching problems:', err.message);
@@ -33,17 +51,35 @@ app.get('/api/problems', async (req, res) => {
 app.get('/api/problems/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const row = await get('SELECT * FROM problems WHERE id = $1', [id]);
+    const sql = isPostgres ? 'SELECT * FROM problems WHERE id = $1' : 'SELECT * FROM problems WHERE id = ?';
+    const row = await get(sql, [id]);
     if (!row) {
       return res.status(404).json({ error: 'Problem not found' });
     }
-    const problem = {
-      ...row,
-      examples: isPostgres ? row.examples : JSON.parse(row.examples),
-      hints: isPostgres ? row.hints : JSON.parse(row.hints),
-      correctAnswers: isPostgres ? row.correctanswers : JSON.parse(row.correctAnswers),
-      testCases: isPostgres ? row.testcases : JSON.parse(row.testCases)
-    };
+    let problem;
+    if (isPostgres) {
+      problem = {
+        id: row.id,
+        title: row.title,
+        difficulty: row.difficulty,
+        acceptance: row.acceptance,
+        description: row.description,
+        examples: row.examples,
+        hints: row.hints,
+        initialCode: row["initialCode"],
+        correctAnswers: row["correctAnswers"],
+        testCases: row["testCases"],
+        functionName: row["functionName"]
+      };
+    } else {
+      problem = {
+        ...row,
+        examples: JSON.parse(row.examples),
+        hints: JSON.parse(row.hints),
+        correctAnswers: JSON.parse(row.correctAnswers),
+        testCases: JSON.parse(row.testCases)
+      };
+    }
     res.json(problem);
   } catch (err) {
     console.error('Error fetching problem:', err.message);
@@ -58,7 +94,7 @@ app.post('/api/submissions', async (req, res) => {
     let result;
     if (isPostgres) {
       result = await run(
-        'INSERT INTO submissions (problemId, code, status) VALUES ($1, $2, $3) RETURNING *',
+        'INSERT INTO submissions ("problemId", code, status) VALUES ($1, $2, $3) RETURNING *',
         [problemId, code, status]
       );
     } else {

@@ -25,6 +25,13 @@
       "script": "build",
       "problemMatcher": [],
       "group": "build"
+    },
+    {
+      "label": "reload db",
+      "type": "shell",
+      "command": "./reload-db.sh",
+      "problemMatcher": [],
+      "group": "build"
     }
   ]
 }

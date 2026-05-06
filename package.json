@@ -10,7 +10,8 @@
     "dev:frontend": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server.js"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",

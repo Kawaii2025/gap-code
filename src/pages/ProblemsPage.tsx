@@ -1,13 +1,43 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { problems } from '../data/problems'
+
+interface Problem {
+  id: number
+  title: string
+  difficulty: 'easy' | 'medium' | 'hard'
+  acceptance: string
+}
 
 function ProblemsPage() {
   const navigate = useNavigate()
+  const [problems, setProblems] = useState<Problem[]>([])
+  const [loading, setLoading] = useState(true)
 
   const difficultyText = {
     easy: '简单',
     medium: '中等',
     hard: '困难'
+  }
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/problems')
+      .then(res => res.json())
+      .then(data => {
+        setProblems(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching problems:', err)
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-gray-500">加载中...</div>
+      </div>
+    )
   }
 
   return (

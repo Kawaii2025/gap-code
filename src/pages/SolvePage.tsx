@@ -1,7 +1,30 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Editor from '@monaco-editor/react'
-import { problems, Problem } from '../data/problems'
+
+interface Example {
+  input: string
+  output: string
+}
+
+interface TestCase {
+  input: string
+  expectedOutput: string
+}
+
+interface Problem {
+  id: number
+  title: string
+  difficulty: 'easy' | 'medium' | 'hard'
+  acceptance: string
+  description: string
+  examples: Example[]
+  hints: string[]
+  initialCode: string
+  correctAnswers: string[]
+  testCases: TestCase[]
+  functionName: string
+}
 
 interface SolvePageProps {
   darkMode: boolean
@@ -15,6 +38,7 @@ function SolvePage({ darkMode }: SolvePageProps) {
   const [result, setResult] = useState<string | null>(null)
   const [showResult, setShowResult] = useState(false)
   const [showHints, setShowHints] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const difficultyText = {
     easy: '简单',
@@ -23,11 +47,19 @@ function SolvePage({ darkMode }: SolvePageProps) {
   }
 
   useEffect(() => {
-    const foundProblem = problems.find(p => p.id === Number(id))
-    if (foundProblem) {
-      setProblem(foundProblem)
-      setCode(foundProblem.initialCode)
-      setShowResult(false)
+    if (id) {
+      fetch(`http://localhost:3001/api/problems/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          setProblem(data)
+          setCode(data.initialCode)
+          setShowResult(false)
+          setLoading(false)
+        })
+        .catch(err => {
+          console.error('Error fetching problem:', err)
+          setLoading(false)
+        })
     }
   }, [id])
 
@@ -118,8 +150,16 @@ function SolvePage({ darkMode }: SolvePageProps) {
     }, 600)
   }
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-gray-500">加载中...</div>
+      </div>
+    )
+  }
+
   if (!problem) {
-    return <div className="p-8 text-center text-gray-500">加载中...</div>
+    return <div className="p-8 text-center text-gray-500">题目未找到</div>
   }
 
   return (

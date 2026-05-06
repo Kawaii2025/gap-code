@@ -20,7 +20,7 @@ function ProblemsPage() {
   }
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/problems')
+    fetch('http://localhost:4000/api/problems')
       .then(res => res.json())
       .then(data => {
         setProblems(data)

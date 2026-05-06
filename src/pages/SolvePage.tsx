@@ -48,7 +48,7 @@ function SolvePage({ darkMode }: SolvePageProps) {
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3001/api/problems/${id}`)
+      fetch(`http://localhost:4000/api/problems/${id}`)
         .then(res => res.json())
         .then(data => {
           setProblem(data)

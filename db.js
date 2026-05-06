@@ -10,7 +10,7 @@ let db;
 let isPostgres = false;
 
 // Check if we should use PostgreSQL (Neon) or SQLite
-if (process.env.DATABASE_URL) {
+if (process.env.DATABASE_URL && process.env.LOCAL_SQLITE !== 'true') {
   const { Pool } = await import('pg');
   isPostgres = true;
   db = new Pool({

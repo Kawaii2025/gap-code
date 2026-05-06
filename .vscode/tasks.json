@@ -32,6 +32,14 @@
       "command": "./reload-db.sh",
       "problemMatcher": [],
       "group": "build"
+    },
+    {
+      "label": "sync to neon",
+      "type": "shell",
+      "command": "node",
+      "args": ["sync-to-neon.js"],
+      "problemMatcher": [],
+      "group": "build"
     }
   ]
 }

@@ -259,5 +259,119 @@ var merge = function(nums1, m, nums2, n) {
       { input: '[1,2,3,0,0,0],3,[2,5,6],3', expectedOutput: '[1,2,2,3,5,6]' }
     ],
     functionName: 'merge'
+  },
+  {
+    id: 9,
+    title: '二分查找（经典模板）',
+    difficulty: 'easy',
+    acceptance: '61.2%',
+    description: '给定一个有序整数数组 nums 和一个目标值 target，请你在数组中找到 target 的下标，若不存在返回 -1。',
+    examples: [
+      { input: 'nums = [-1,0,3,5,9,12], target = 9', output: '4' }
+    ],
+    hints: [
+      '使用左右边界 left 和 right',
+      '每次取中点 mid = Math.floor((left + right) / 2)',
+      '根据 nums[mid] 与 target 的大小关系缩小区间'
+    ],
+    initialCode: `/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+    let left = 0, right = nums.length - 1;
+    while(left <= right){
+        const mid = Math.floor((left + right) / 2);
+        if(nums[mid] === target) return mid;
+        if(nums[mid] < target){
+            left = ________;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+};`,
+    correctAnswers: ['mid + 1'],
+    testCases: [
+      { input: '[-1,0,3,5,9,12],9', expectedOutput: '4' }
+    ],
+    functionName: 'search'
+  },
+  {
+    id: 10,
+    title: '有效括号（经典栈模板）',
+    difficulty: 'easy',
+    acceptance: '40.6%',
+    description: '给定只包括 ()[]{} 的字符串 s，判断字符串是否有效。',
+    examples: [
+      { input: 's = "()[]{}"', output: 'true' }
+    ],
+    hints: [
+      '使用栈存储左括号',
+      '遇到右括号时弹栈并检查是否匹配',
+      '最后栈为空才是有效字符串'
+    ],
+    initialCode: `/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isValid = function(s) {
+    const map = {
+        ')': '(',
+        ']': '[',
+        '}': '{'
+    };
+    const stack = [];
+    for(const ch of s){
+        if(ch === '(' || ch === '[' || ch === '{'){
+            stack.push(ch);
+        } else {
+            const top = stack.pop();
+            if(top !== map[ch]) return ________;
+        }
+    }
+    return stack.length === 0;
+};`,
+    correctAnswers: ['false'],
+    testCases: [
+      { input: '"()[]{}"', expectedOutput: 'true' }
+    ],
+    functionName: 'isValid'
+  },
+  {
+    id: 11,
+    title: '移动零（双指针模板）',
+    difficulty: 'easy',
+    acceptance: '59.4%',
+    description: '给定一个数组 nums，编写一个函数将所有 0 移动到数组末尾，同时保持非零元素的相对顺序。',
+    examples: [
+      { input: 'nums = [0,1,0,3,12]', output: '[1,3,12,0,0]' }
+    ],
+    hints: [
+      '使用快慢指针',
+      '快指针遍历数组，慢指针指向下一个应该放非零元素的位置',
+      '最后把慢指针后面的元素都置为 0'
+    ],
+    initialCode: `/**
+ * @param {number[]} nums
+ * @return {void} Do not return anything, modify nums in-place instead.
+ */
+var moveZeroes = function(nums) {
+    let slow = 0;
+    for(let fast = 0; fast < nums.length; fast++){
+        if(nums[fast] !== 0){
+            nums[slow++] = nums[fast];
+        }
+    }
+    while(slow < nums.length){
+        nums[slow++] = ________;
+    }
+};`,
+    correctAnswers: ['0'],
+    testCases: [
+      { input: '[0,1,0,3,12]', expectedOutput: '[1,3,12,0,0]' }
+    ],
+    functionName: 'moveZeroes'
   }
 ]

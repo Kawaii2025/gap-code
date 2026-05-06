@@ -9,12 +9,20 @@ const PORT = process.env.PORT || 4000
 app.use(cors())
 app.use(express.json())
 
+// Root endpoint (health check)
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    database: isPostgres ? 'Neon (PostgreSQL)' : 'SQLite (Local)'
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     database: isPostgres ? 'Neon (PostgreSQL)' : 'SQLite (Local)'
-  })
+  });
 });
 
 // API Endpoints

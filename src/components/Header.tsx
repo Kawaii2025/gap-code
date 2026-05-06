@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 interface HeaderProps {
   toggleTheme: () => void
@@ -12,11 +13,11 @@ function Header({ toggleTheme }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
-            <a href="/" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <span className="text-gapcode text-2xl font-bold">GapCode</span>
-            </a>
+            </Link>
             <nav className="hidden md:ml-8 md:flex space-x-6">
-              <a href="/" className="text-gray-700 dark:text-gray-300 hover:text-gapcode px-3 py-2 text-sm font-medium">题库</a>
+              <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-gapcode px-3 py-2 text-sm font-medium">题库</Link>
               <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-gapcode px-3 py-2 text-sm font-medium">竞赛</a>
               <a href="#" className="text-gray-700 dark:text-gray-300 hover:text-gapcode px-3 py-2 text-sm font-medium">题解</a>
             </nav>

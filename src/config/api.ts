@@ -4,8 +4,7 @@ const getApiBaseUrl = () => {
   if (import.meta.env.DEV) {
     return 'http://localhost:4000';
   }
-  // TODO: Replace this with your deployed backend URL (e.g., Vercel, Railway, Render)
-  return 'https://your-deployed-backend-url.com';
+  return 'https://gap-code.vercel.app';
 };
 
 export const API_BASE_URL = getApiBaseUrl();

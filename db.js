@@ -66,11 +66,11 @@ function seedProblems() {
       problem.difficulty,
       problem.acceptance,
       problem.description,
-      problem.examples,
-      problem.hints,
+      JSON.stringify(problem.examples),
+      JSON.stringify(problem.hints),
       problem.initialCode,
-      problem.correctAnswers,
-      problem.testCases,
+      JSON.stringify(problem.correctAnswers),
+      JSON.stringify(problem.testCases),
       problem.functionName
     );
   });

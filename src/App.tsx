@@ -42,7 +42,7 @@ function AppContent() {
 
 function App() {
   return (
-    <Router basename={import.meta.env.BASE_URL}>
+    <Router basename={(import.meta as any).env.BASE_URL}>
       <AppContent />
     </Router>
   )

@@ -1,11 +1,10 @@
 import { useState } from 'react'
 
 interface HeaderProps {
-  darkMode: boolean
   toggleTheme: () => void
 }
 
-function Header({ darkMode, toggleTheme }: HeaderProps) {
+function Header({ toggleTheme }: HeaderProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   return (

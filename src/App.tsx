@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import ProblemsPage from './pages/ProblemsPage'
 import SolvePage from './pages/SolvePage'
@@ -29,7 +29,7 @@ function AppContent() {
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 min-h-screen">
-      <Header darkMode={darkMode} toggleTheme={toggleTheme} />
+      <Header toggleTheme={toggleTheme} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Routes>
           <Route path="/" element={<ProblemsPage />} />

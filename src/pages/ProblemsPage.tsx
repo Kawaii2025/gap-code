@@ -1,11 +1,8 @@
 import { useNavigate } from 'react-router-dom'
+import { problems } from '../data/problems'
 
 function ProblemsPage() {
   const navigate = useNavigate()
-
-  const problems = [
-    { id: 1, title: '两数之和（填空模板版）', difficulty: 'easy', acceptance: '49.3%' }
-  ]
 
   const difficultyText = {
     easy: '简单',
